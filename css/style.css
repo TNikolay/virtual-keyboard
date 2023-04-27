@@ -1,0 +1,40 @@
+*,
+::after,
+::before {
+  box-sizing: border-box;
+}
+
+body,
+html {
+  margin: 0;
+  padding: 0;
+  min-height: 100vh;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+.global-container {
+  display: flex;
+  min-height: 100vh;
+  flex-direction: column;
+  width: 1280px;
+  margin: 0 auto;
+  background-color: bisque;
+}
+
+.index-header {
+  background-color: beige;
+  height: 60px;
+}
+
+main {
+  background: whitesmoke;
+  flex-grow: 1;
+}
+
+footer {
+  background-color: beige;
+  height: 100px;
+}
