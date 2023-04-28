@@ -15,7 +15,7 @@ html {
   scroll-behavior: smooth;
 }
 
-.global-container {
+.wrapper {
   display: flex;
   min-height: 100vh;
   flex-direction: column;
@@ -24,17 +24,31 @@ html {
   background-color: bisque;
 }
 
-.index-header {
-  background-color: beige;
-  height: 60px;
+.keyboard-wrapper {
+  display: flex;
+  flex-wrap: wrap;
+  background-color: brown;
+  width: 980px;
+  margin: 0 auto;
 }
 
-main {
-  background: whitesmoke;
-  flex-grow: 1;
+.h1 {
+  margin: 40px auto;
 }
 
-footer {
-  background-color: beige;
-  height: 100px;
+.input-field {
+  resize: none;
+  height: 200px;
+}
+
+.key-button {
+  margin: 5px;
+  padding: 10px 20px;
+  height: 40px;
+  background-color: aquamarine;
+  border: 2px solid black;
+}
+
+.key-button_pressed {
+  background-color: green;
 }
