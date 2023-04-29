@@ -9,7 +9,7 @@ const LAYOUTS = {
 let keys;
 let layout;
 let input;
-
+let latestPressedByMouseButtons;
 function setLayout(name) {
   layout = LAYOUTS[name];
   for (let i = 0; i < keys.length; i += 1) {
@@ -50,27 +50,47 @@ function emulateKeyPress(index) {
 function createKeyButton(_key, index) {
   const el = createElement('button', { className: 'key-button' });
   el.dataset.index = index;
-  el.addEventListener('click', () => emulateKeyPress(index));
+
   return el;
 }
 
-function onKeyDown(e) {
-  const index = KEY_CODES.indexOf(e.code);
-  if (index === -1) return console.log('!!!!!!!!!!!!!!! onKeyDown ', e.code);
-
-  console.log('onKeyDown', e.code);
-  e.preventDefault();
+function onVirtualButtonDown(index) {
+  console.log('onVirtualButtonDown ', index);
   keys[index].classList.add('key-button_pressed');
   emulateKeyPress(index);
 }
 
+function onVirtualButtonUp(index) {
+  console.log('onVirtualButtonUp ', index);
+  keys[index].classList.remove('key-button_pressed');
+}
+
+function onKeyDown(e) {
+  const index = KEY_CODES.indexOf(e.code);
+  if (index === -1) return;
+
+  e.preventDefault();
+  onVirtualButtonDown(index);
+}
+
 function onKeyUp(e) {
   const index = KEY_CODES.indexOf(e.code);
-  if (index === -1) return console.log('!!!!!!!!!!!!!!! onKeyUp ', e.code);
+  if (index === -1) return;
 
-  console.log('onKeyUp', e.code);
   e.preventDefault();
-  keys[index].classList.remove('key-button_pressed');
+  onVirtualButtonUp(index);
+}
+
+function onMouseDown(e) {
+  if (e.button !== 0 || !e.target.classList.contains('key-button')) return;
+  onVirtualButtonDown(e.target.dataset.index);
+  latestPressedByMouseButtons = e.target.dataset.index;
+}
+
+function onMouseUp(e) {
+  if (e.button !== 0 || latestPressedByMouseButtons === undefined) return;
+  onVirtualButtonUp(latestPressedByMouseButtons);
+  latestPressedByMouseButtons = undefined;
 }
 
 export default function initKeyboard(inputTo) {
@@ -80,8 +100,12 @@ export default function initKeyboard(inputTo) {
   keys = KEY_CODES.map(createKeyButton);
   elKeyboardWrapper.append(...keys);
 
+  elKeyboardWrapper.addEventListener('mousedown', onMouseDown);
+  elKeyboardWrapper.addEventListener('mouseup', onMouseUp);
+  elKeyboardWrapper.addEventListener('mouseout', onMouseUp);
   document.body.addEventListener('keydown', onKeyDown);
   document.body.addEventListener('keyup', onKeyUp);
+
   setLayout('eng');
 
   return elKeyboardWrapper;
