@@ -5,15 +5,27 @@ const LAYOUTS = {
   eng: ['`', '1', '2', '3', '4', '5', '6', '7', '8', '9', '0', '-', '=', 'Backspace', 'Tab', 'q', 'w', 'e', 'r', 't', 'y', 'u', 'i', 'o', 'p', '[', ']', '\\', 'Delete', 'CapsLock', 'a', 's', 'd', 'f', 'g', 'h', 'j', 'k', 'l', ';', "'", 'Enter', 'Shift', 'z', 'x', 'c', 'v', 'b', 'n', 'm', ',', '.', '/', '\u2191', 'Shift', 'Control', 'Alt', ' ', 'Alt', 'Control', '\u2190', '\u2193', '\u2192'],
   rus: ['ё', '1', '2', '3', '4', '5', '6', '7', '8', '9', '0', '-', '=', 'Backspace', 'Tab', 'й', 'ц', 'у', 'к', 'е', 'н', 'г', 'ш', 'щ', 'з', 'х', 'ъ', '\\', 'Delete', 'CapsLock', 'ф', 'ы', 'в', 'а', 'п', 'р', 'о', 'л', 'д', 'ж', 'э', 'Enter', 'Shift', 'я', 'ч', 'с', 'м', 'и', 'т', 'ь', 'б', 'ю', '.', '\u2191', 'Shift', 'Control', 'Alt', ' ', 'Alt', 'Control', '\u2190', '\u2193', '\u2192'],
 };
+const LAYOUTS_SHIFT = {
+  eng: ['~', '!', '@', '#', '$', '%', '^', '&', '*', '(', ')', '_', '+', 'Backspace', 'Tab', 'Q', 'W', 'E', 'R', 'T', 'Y', 'U', 'I', 'O', 'P', '{', '}', '|', 'Delete', 'CapsLock', 'A', 'S', 'D', 'F', 'G', 'H', 'J', 'K', 'L', ':', '"', 'Enter', 'Shift', 'Z', 'X', 'C', 'V', 'B', 'N', 'M', '<', '>', '?', '\u2191', 'Shift', 'Control', 'Alt', ' ', 'Alt', 'Control', '\u2190', '\u2193', '\u2192'],
+  rus: ['Ё', '!', '"', '№', ';', '%', ':', '?', '*', '(', ')', '_', '+', 'Backspace', 'Tab', 'Й', 'Ц', 'У', 'К', 'Е', 'Н', 'Г', 'Ш', 'Щ', 'З', 'Х', 'Ъ', '/', 'Delete', 'CapsLock', 'Ф', 'Ы', 'В', 'А', 'П', 'Р', 'О', 'Л', 'Д', 'Ж', 'Э', 'Enter', 'Shift', 'Я', 'Ч', 'С', 'М', 'И', 'Т', 'Ь', 'Б', 'Ю', ',', '\u2191', 'Shift', 'Control', 'Alt', ' ', 'Alt', 'Control', '\u2190', '\u2193', '\u2192'],
+};
+const indexCapsLock = KEY_CODES.indexOf('CapsLock');
+const indexShiftLeft = KEY_CODES.indexOf('ShiftLeft');
+const indexShiftRight = KEY_CODES.indexOf('ShiftRight');
 
 let keys;
-let layout;
 let input;
+let layout;
+let layoutName;
 let latestPressedByMouseButtons;
-function setLayout(name) {
-  layout = LAYOUTS[name];
+let isCapsLock = false;
+let isShift = false;
+
+function updateButtonsNames() {
   for (let i = 0; i < keys.length; i += 1) {
-    keys[i].textContent = layout[i];
+    const t = layout[i];
+    if (!isCapsLock || t.length > 1) keys[i].textContent = t;
+    else keys[i].textContent = isShift ? t.toLocaleLowerCase() : t.toLocaleUpperCase();
   }
 }
 
@@ -22,7 +34,7 @@ function emulateKeyPress(index) {
   let b = input.selectionStart;
   let e = input.selectionEnd;
   let nb = b + 1;
-  let nk = layout[index];
+  let nk;
 
   switch (KEY_CODES[index]) {
     case 'Enter': nk = '\n'; break;
@@ -39,8 +51,10 @@ function emulateKeyPress(index) {
       nb = b;
       break;
     default:
+      if (!isCapsLock) nk = layout[index];
+      else nk = isShift ? layout[index].toLocaleLowerCase() : layout[index].toLocaleUpperCase();
   }
-  console.log(b, e, nk, t);
+  //console.log(b, e, nk, t);
 
   input.focus();
   input.setRangeText(nk, b, e);
@@ -48,32 +62,70 @@ function emulateKeyPress(index) {
 }
 
 function createKeyButton(_key, index) {
-  const el = createElement('button', { className: 'key-button' });
+  const el = createElement('button', { className: 'key-button', tabIndex: '-1' });
   el.dataset.index = index;
-
   return el;
 }
 
-function onVirtualButtonDown(index) {
+function resetShift() {
+  keys[indexShiftLeft].classList.remove('key-button_pressed');
+  keys[indexShiftRight].classList.remove('key-button_pressed');
+  isShift = false;
+  layout = LAYOUTS[layoutName];
+  updateButtonsNames();
+}
+
+function onVirtualButtonDown(index, doNotResetShift = false) {
   console.log('onVirtualButtonDown ', index);
+
+  if (index === indexCapsLock) {
+    isCapsLock = !isCapsLock;
+    keys[index].classList.toggle('key-button_pressed');
+    updateButtonsNames();
+    return;
+  }
+
+  if (index === indexShiftLeft || index === indexShiftRight) {
+    if (isShift) resetShift();
+    else {
+      keys[index].classList.add('key-button_pressed');
+      layout = LAYOUTS_SHIFT[layoutName];
+      isShift = true;
+      updateButtonsNames();
+    }
+    return;
+  }
+
   keys[index].classList.add('key-button_pressed');
   emulateKeyPress(index);
+
+  if (isShift && !doNotResetShift) resetShift();
 }
 
 function onVirtualButtonUp(index) {
   console.log('onVirtualButtonUp ', index);
+  input.focus();
+  if (index === indexCapsLock || index === indexShiftLeft || index === indexShiftRight) return;
+
   keys[index].classList.remove('key-button_pressed');
 }
 
 function onKeyDown(e) {
+  if (e.repeat && (e.code === 'CapsLock' || e.code === 'ShiftLeft' || e.code === 'ShiftRight')) return;
+
   const index = KEY_CODES.indexOf(e.code);
   if (index === -1) return;
 
   e.preventDefault();
-  onVirtualButtonDown(index);
+  onVirtualButtonDown(index, e.shiftKey);
 }
 
 function onKeyUp(e) {
+  if (e.code === 'ShiftLeft' || e.code === 'ShiftRight') {
+    resetShift();
+    return;
+  }
+
   const index = KEY_CODES.indexOf(e.code);
   if (index === -1) return;
 
@@ -83,11 +135,12 @@ function onKeyUp(e) {
 
 function onMouseDown(e) {
   if (e.button !== 0 || !e.target.classList.contains('key-button')) return;
-  onVirtualButtonDown(e.target.dataset.index);
-  latestPressedByMouseButtons = e.target.dataset.index;
+  latestPressedByMouseButtons = +e.target.dataset.index;
+  onVirtualButtonDown(latestPressedByMouseButtons, e.shiftKey);
 }
 
 function onMouseUp(e) {
+  input.focus();
   if (e.button !== 0 || latestPressedByMouseButtons === undefined) return;
   onVirtualButtonUp(latestPressedByMouseButtons);
   latestPressedByMouseButtons = undefined;
@@ -106,7 +159,9 @@ export default function initKeyboard(inputTo) {
   document.body.addEventListener('keydown', onKeyDown);
   document.body.addEventListener('keyup', onKeyUp);
 
-  setLayout('eng');
+  layoutName = 'eng';
+  layout = LAYOUTS[layoutName];
+  updateButtonsNames();
 
   return elKeyboardWrapper;
 }
