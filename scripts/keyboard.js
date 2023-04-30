@@ -130,16 +130,17 @@ function onVirtualButtonUp(index) {
 }
 
 function onKeyDown(e) {
+  e.preventDefault();
   if (e.repeat && (e.code === 'CapsLock' || e.code === 'ShiftLeft' || e.code === 'ShiftRight')) return;
 
   const index = KEY_CODES.indexOf(e.code);
   if (index === -1) return;
 
-  e.preventDefault();
   onVirtualButtonDown(index, e.shiftKey);
 }
 
 function onKeyUp(e) {
+  e.preventDefault();
   if (e.code === 'ShiftLeft' || e.code === 'ShiftRight') {
     resetShift();
     return;
@@ -148,7 +149,6 @@ function onKeyUp(e) {
   const index = KEY_CODES.indexOf(e.code);
   if (index === -1) return;
 
-  e.preventDefault();
   onVirtualButtonUp(index);
 }
 
@@ -177,6 +177,7 @@ export default function initKeyboard(inputTo) {
   elKeyboardWrapper.addEventListener('mouseout', onMouseUp);
   document.body.addEventListener('keydown', onKeyDown);
   document.body.addEventListener('keyup', onKeyUp);
+  window.addEventListener('focus', () => { keys.forEach((v, i) => { if (['ControlRight', 'ControlLeft', 'AltRight', 'AltLeft'].includes(KEY_CODES[i])) v.classList.remove('key-button_pressed'); }); });
   setLayout(localStorage.getItem('TNikolay_VK_Layout') || 'eng');
 
   return elKeyboardWrapper;
