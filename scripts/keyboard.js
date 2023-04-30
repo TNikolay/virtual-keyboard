@@ -29,8 +29,35 @@ function updateButtonsNames() {
   }
 }
 
+function resetShift() {
+  keys[indexShiftLeft].classList.remove('key-button_pressed');
+  keys[indexShiftRight].classList.remove('key-button_pressed');
+  isShift = false;
+  layout = LAYOUTS[layoutName];
+  updateButtonsNames();
+}
+
+function setLayout(name) {
+  layoutName = name || 'eng';
+  layout = LAYOUTS[layoutName];
+  localStorage.setItem('TNikolay_VK_Layout', layoutName);
+  updateButtonsNames();
+}
+
+function switchLayout() {
+  const k = Object.keys(LAYOUTS);
+  const i = k.indexOf(layoutName);
+  setLayout(k[i === k.length - 1 ? 0 : i + 1]);
+}
+
 function emulateKeyPress(index) {
-  const t = input.value;
+  if (['ControlRight', 'ControlLeft', 'AltRight', 'AltLeft'].includes(KEY_CODES[index])) return;
+  if (isShift && KEY_CODES[index] === 'Space') {
+    resetShift();
+    switchLayout();
+    return;
+  }
+
   let b = input.selectionStart;
   let e = input.selectionEnd;
   let nb = b + 1;
@@ -54,7 +81,7 @@ function emulateKeyPress(index) {
       if (!isCapsLock) nk = layout[index];
       else nk = isShift ? layout[index].toLocaleLowerCase() : layout[index].toLocaleUpperCase();
   }
-  //console.log(b, e, nk, t);
+  // console.log(b, e, nk, t);
 
   input.focus();
   input.setRangeText(nk, b, e);
@@ -65,14 +92,6 @@ function createKeyButton(_key, index) {
   const el = createElement('button', { className: 'key-button', tabIndex: '-1' });
   el.dataset.index = index;
   return el;
-}
-
-function resetShift() {
-  keys[indexShiftLeft].classList.remove('key-button_pressed');
-  keys[indexShiftRight].classList.remove('key-button_pressed');
-  isShift = false;
-  layout = LAYOUTS[layoutName];
-  updateButtonsNames();
 }
 
 function onVirtualButtonDown(index, doNotResetShift = false) {
@@ -158,10 +177,7 @@ export default function initKeyboard(inputTo) {
   elKeyboardWrapper.addEventListener('mouseout', onMouseUp);
   document.body.addEventListener('keydown', onKeyDown);
   document.body.addEventListener('keyup', onKeyUp);
-
-  layoutName = 'eng';
-  layout = LAYOUTS[layoutName];
-  updateButtonsNames();
+  setLayout(localStorage.getItem('TNikolay_VK_Layout') || 'eng');
 
   return elKeyboardWrapper;
 }
