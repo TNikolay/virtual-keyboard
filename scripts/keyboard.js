@@ -65,21 +65,46 @@ function emulateKeyPress(index) {
   let b = input.selectionStart;
   let e = input.selectionEnd;
   let nb = b + 1;
-  let nk;
+  let nk = '';
+  let cr;
+  let cl;
+  let t;
+  let endOfNearString;
 
   switch (KEY_CODES[index]) {
     case 'Enter': nk = '\n'; break;
     case 'Tab': nk = '\t'; break;
     case 'Delete':
       if (b === e) e += 1;
-      nk = '';
       nb = b;
       break;
     case 'Backspace':
       if (b === 0 && e === 0) return;
       if (b === e) b -= 1;
-      nk = '';
       nb = b;
+      break;
+    case 'ArrowRight': break;
+    case 'ArrowLeft':
+      nb = b === 0 ? 0 : b - 1;
+      break;
+    case 'ArrowDown':
+      t = input.value;
+      cl = t.lastIndexOf('\n', b - 1);
+      cl = cl === -1 ? b : b - cl - 1;
+      cr = t.indexOf('\n', b);
+      cr = cr === -1 ? t.length - b : cr - b;
+      endOfNearString = t.indexOf('\n', cr + b + 1);
+      endOfNearString = endOfNearString === -1 ? t.length : endOfNearString;
+      nb = Math.min(nb + cl + cr, endOfNearString);
+      break;
+    case 'ArrowUp':
+      t = input.value;
+      cl = t.lastIndexOf('\n', b - 1);
+      if (cl === -1) { nb = 0; break; }
+      cl = b - cl;
+      endOfNearString = t.lastIndexOf('\n', b - cl - 1);
+      nb = Math.min(endOfNearString + cl, b - cl);
+      if (nb < 0) nb = 0;
       break;
     default:
       if (!isCapsLock) nk = layout[index];
@@ -98,7 +123,7 @@ function createKeyButton(_key, index) {
 }
 
 function playSound() {
-  const a = new Audio(`../asserts/${getRandomNumber(6)}.wav`);
+  const a = new Audio(`../asserts/${getRandomNumber(9)}.wav`);
   a.volume = 0.005;
   a.play();
 }

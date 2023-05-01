@@ -3,7 +3,7 @@ import initKeyboard from './keyboard.js';
 
 function initApp() {
   const elWrapper = createElement('div', { className: 'wrapper' });
-  const elTextArea = createElement('textarea', { className: 'input-field' });
+  const elTextArea = createElement('textarea', { className: 'input-field', textContent: 'Привет, Маугли!' });
 
   elWrapper.append(createElement('h1', { className: 'h1', textContent: 'Rainforest grown keyboard' }));
   elWrapper.append(elTextArea);
@@ -21,6 +21,7 @@ function initApp() {
   elWrapper.append(initKeyboard(elTextArea, lang));
   elWrapper.append(info);
   document.body.append(elWrapper);
+  elTextArea.focus();
 }
 
 initApp();

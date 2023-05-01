@@ -48,9 +48,12 @@ html {
 
 .input-field {
   resize: none;
-  width: 600px;
+  width: 700px;
   height: 200px;
   margin: 0 auto;
+  font-family: Lucida Console;
+  scroll-behavior: auto;
+  white-space: nowrap;
 }
 
 .key-button {
