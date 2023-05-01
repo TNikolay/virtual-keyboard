@@ -141,6 +141,7 @@ function onVirtualButtonDown(index, doNotResetShift = false) {
   if (index === indexCapsLock) {
     isCapsLock = !isCapsLock;
     keys[index].classList.toggle('key-button_pressed');
+    if (isShift && !doNotResetShift) resetShift();
     updateButtonsNames();
     return;
   }
