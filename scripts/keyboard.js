@@ -7,7 +7,7 @@ const LAYOUTS = {
   Russian: ['ё', '1', '2', '3', '4', '5', '6', '7', '8', '9', '0', '-', '=', 'Backspace', 'Tab', 'й', 'ц', 'у', 'к', 'е', 'н', 'г', 'ш', 'щ', 'з', 'х', 'ъ', 'Delete', 'CapsLock', 'ф', 'ы', 'в', 'а', 'п', 'р', 'о', 'л', 'д', 'ж', 'э', '\\', 'Enter', '\u21D1 Shift', 'я', 'ч', 'с', 'м', 'и', 'т', 'ь', 'б', 'ю', '.', '\u2191', '\u21D1 Shift', 'Control', 'Alt', ' ', 'Alt', '\u2190', '\u2193', '\u2192', 'Control'],
 };
 const LAYOUTS_SHIFT = {
-  Monkey: ['\u0E01', '\u0E02', '\u0E03', '\u0E04', '\u0E05', '\u0E06', '\u0E07', '\u0E08', '\u0E09', '\u0E0A', '\u0E0B', '\u0E0C', '\u0E0D', 'Backspace', 'Tab', '\u0E0F', '\u0E10', '\u0E11', '\u0E12', '\u0E13', '\u0E14', '\u0E15', '\u0E16', '\u0E17', '\u0E18', '\u0E1A', '\u0E1B', 'Delete', 'CapsLock', '\u0E1E', '\u0E1F', '\u0E20', '\u0E21', '\u0E22', '\u0E23', '\u0E24', '\u0E25', '\u0E26', '\u0E27', '\u0E28', '\u0E1C', 'Enter', '\u21D1 Shift', '\u0E2A', '\u0E2B', '\u0E2C', '\u0E2D', '\u0E2E', '\u0E2F', '\u0E30', '\u0E31', '\u0E32', '\u0E33', '\u2191', '\u21D1 Shift', 'Control', 'Alt', ' ', 'Alt', '\u2190', '\u2193', '\u2192', 'Control'],
+  Monkey: ['\u0E34', '\u0E35', '\u0E36', '\u0E37', '\u0E38', '\u0E39', '\u0E3A', '\u0E3F', '\u0E40', '\u0E41', '\u0E42', '\u0E43', '\u0E44', 'Backspace', 'Tab', '\u0E45', '\u0E46', '\u0E47', '\u0E48', '\u0E49', '\u0E4A', '\u0E4B', '\u0E4C', '\u0E4E', '\u0E4F', '\u0E50', '\u0E51', 'Delete', 'CapsLock', '\u0E52', '\u0E53', '\u0E54', '\u0E55', '\u0E56', '\u0E57', '\u0E58', '\u0E59', '\u0E5A', '\u0E5B', '\u0E20', '\u0E21', 'Enter', '\u21D1 Shift', '\u0E23', '\u0E24', '\u0E01', '\u0E02', '\u0E03', '\u0E04', '\u0E05', '\u0E06', '\u0E1B', '\u0E1C', '\u2191', '\u21D1 Shift', 'Control', 'Alt', ' ', 'Alt', '\u2190', '\u2193', '\u2192', 'Control'],
   English: ['~', '!', '@', '#', '$', '%', '^', '&', '*', '(', ')', '_', '+', 'Backspace', 'Tab', 'Q', 'W', 'E', 'R', 'T', 'Y', 'U', 'I', 'O', 'P', '{', '}', 'Delete', 'CapsLock', 'A', 'S', 'D', 'F', 'G', 'H', 'J', 'K', 'L', ':', '"', '|', 'Enter', '\u21D1 Shift', 'Z', 'X', 'C', 'V', 'B', 'N', 'M', '<', '>', '?', '\u2191', '\u21D1 Shift', 'Control', 'Alt', ' ', 'Alt', '\u2190', '\u2193', '\u2192', 'Control'],
   Russian: ['Ё', '!', '"', '№', ';', '%', ':', '?', '*', '(', ')', '_', '+', 'Backspace', 'Tab', 'Й', 'Ц', 'У', 'К', 'Е', 'Н', 'Г', 'Ш', 'Щ', 'З', 'Х', 'Ъ', 'Delete', 'CapsLock', 'Ф', 'Ы', 'В', 'А', 'П', 'Р', 'О', 'Л', 'Д', 'Ж', 'Э', '/', 'Enter', '\u21D1 Shift', 'Я', 'Ч', 'С', 'М', 'И', 'Т', 'Ь', 'Б', 'Ю', ',', '\u2191', '\u21D1 Shift', 'Control', 'Alt', ' ', 'Alt', '\u2190', '\u2193', '\u2192', 'Control'],
 };
@@ -62,58 +62,65 @@ function emulateKeyPress(index) {
     return;
   }
 
-  let b = input.selectionStart;
-  let e = input.selectionEnd;
-  let nb = b + 1;
-  let nk = '';
-  let cr;
-  let cl;
-  let t;
+  let begin = input.selectionStart;
+  let end = input.selectionEnd;
+  let newBegin = begin + 1;
+  let newKey = '';
+  let charactersRigth;
+  let charactersLeft;
+  let text;
   let endOfNearString;
 
   switch (KEY_CODES[index]) {
-    case 'Enter': nk = '\n'; break;
-    case 'Tab': nk = '\t'; break;
+    case 'Enter': newKey = '\n'; break;
+    case 'Tab': newKey = '\t'; break;
+
     case 'Delete':
-      if (b === e) e += 1;
-      nb = b;
+      if (begin === end) end += 1;
+      newBegin = begin;
       break;
+
     case 'Backspace':
-      if (b === 0 && e === 0) return;
-      if (b === e) b -= 1;
-      nb = b;
+      if (begin === 0 && end === 0) return;
+      if (begin === end) begin -= 1;
+      newBegin = begin;
       break;
+
     case 'ArrowRight': break;
+
     case 'ArrowLeft':
-      nb = b === 0 ? 0 : b - 1;
+      newBegin = begin === 0 ? 0 : begin - 1;
       break;
+
     case 'ArrowDown':
-      t = input.value;
-      cl = t.lastIndexOf('\n', b - 1);
-      cl = cl === -1 ? b : b - cl - 1;
-      cr = t.indexOf('\n', b);
-      cr = cr === -1 ? t.length - b : cr - b;
-      endOfNearString = t.indexOf('\n', cr + b + 1);
-      endOfNearString = endOfNearString === -1 ? t.length : endOfNearString;
-      nb = Math.min(nb + cl + cr, endOfNearString);
+      text = input.value;
+      charactersLeft = text.lastIndexOf('\n', begin - 1);
+      charactersLeft = charactersLeft === -1 ? begin : begin - charactersLeft - 1;
+      charactersRigth = text.indexOf('\n', begin);
+      charactersRigth = charactersRigth === -1 ? text.length - begin : charactersRigth - begin;
+      endOfNearString = text.indexOf('\n', charactersRigth + begin + 1);
+      endOfNearString = endOfNearString === -1 ? text.length : endOfNearString;
+      newBegin = Math.min(newBegin + charactersLeft + charactersRigth, endOfNearString);
       break;
+
     case 'ArrowUp':
-      t = input.value;
-      cl = t.lastIndexOf('\n', b - 1);
-      if (cl === -1) { nb = 0; break; }
-      cl = b - cl;
-      endOfNearString = t.lastIndexOf('\n', b - cl - 1);
-      nb = Math.min(endOfNearString + cl, b - cl);
-      if (nb < 0) nb = 0;
+      text = input.value;
+      charactersLeft = text.lastIndexOf('\n', begin - 1);
+      if (charactersLeft === -1) { newBegin = 0; break; }
+      charactersLeft = begin - charactersLeft;
+      endOfNearString = text.lastIndexOf('\n', begin - charactersLeft - 1);
+      newBegin = Math.min(endOfNearString + charactersLeft, begin - charactersLeft);
+      if (newBegin < 0) newBegin = 0;
       break;
+
     default:
-      if (!isCapsLock) nk = layout[index];
-      else nk = isShift ? layout[index].toLocaleLowerCase() : layout[index].toLocaleUpperCase();
+      if (!isCapsLock) newKey = layout[index];
+      else newKey = isShift ? layout[index].toLocaleLowerCase() : layout[index].toLocaleUpperCase();
   }
 
   input.focus();
-  input.setRangeText(nk, b, e);
-  input.setSelectionRange(nb, nb);
+  input.setRangeText(newKey, begin, end);
+  input.setSelectionRange(newBegin, newBegin);
 }
 
 function createKeyButton(_key, index) {
@@ -200,16 +207,19 @@ function onMouseUp(e) {
 export default function initKeyboard(inputTo, infoTo) {
   input = inputTo;
   info = infoTo;
+
   const elKeyboardWrapper = createElement('div', { className: 'keyboard-wrapper' });
   keys = KEY_CODES.map(createKeyButton);
   keys.forEach((v, i) => { if (['Space', 'Backspace', 'Delete', 'ShiftLeft', 'ShiftRight'].includes(KEY_CODES[i])) v.classList.add('key-button_grow'); });
   elKeyboardWrapper.append(...keys);
+
   elKeyboardWrapper.addEventListener('mousedown', onMouseDown);
   elKeyboardWrapper.addEventListener('mouseup', onMouseUp);
   elKeyboardWrapper.addEventListener('mouseout', onMouseUp);
   document.body.addEventListener('keydown', onKeyDown);
   document.body.addEventListener('keyup', onKeyUp);
   window.addEventListener('focus', () => { keys.forEach((v, i) => { if (['ControlRight', 'ControlLeft', 'AltRight', 'AltLeft'].includes(KEY_CODES[i])) v.classList.remove('key-button_pressed'); }); });
+
   setLayout(localStorage.getItem('TNikolay_VK_Layout') || 'Monkey');
 
   return elKeyboardWrapper;
