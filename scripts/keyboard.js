@@ -17,6 +17,7 @@ const indexShiftRight = KEY_CODES.indexOf('ShiftRight');
 
 let keys;
 let input;
+let info;
 let layout;
 let layoutName;
 let latestPressedByMouseButtons;
@@ -43,6 +44,7 @@ function setLayout(name) {
   layoutName = name || 'eng';
   layout = LAYOUTS[layoutName];
   localStorage.setItem('TNikolay_VK_Layout', layoutName);
+  info.textContent = layoutName;
   updateButtonsNames();
 }
 
@@ -170,9 +172,9 @@ function onMouseUp(e) {
   latestPressedByMouseButtons = undefined;
 }
 
-export default function initKeyboard(inputTo) {
+export default function initKeyboard(inputTo, infoTo) {
   input = inputTo;
-
+  info = infoTo;
   const elKeyboardWrapper = createElement('div', { className: 'keyboard-wrapper' });
   keys = KEY_CODES.map(createKeyButton);
   keys.forEach((v, i) => { if (['Space', 'Backspace', 'Delete', 'ShiftLeft', 'ShiftRight'].includes(KEY_CODES[i])) v.classList.add('key-button_grow'); });

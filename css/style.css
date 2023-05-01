@@ -9,6 +9,8 @@ html {
   margin: 0;
   padding: 0;
   min-height: 100vh;
+  color: aquamarine;
+  font-size: 16px;
 }
 
 html {
@@ -35,14 +37,13 @@ html {
   border-radius: 5px;
   box-shadow: 10px 10px 10px 0px rgba(0, 0, 0, 0.2);
   width: 915px;
-  margin: 30px auto;
+  margin: 70px auto 10px;
 }
 
 .h1 {
   margin: 40px auto;
-  color: white;
   font-family: Comic Sans MS;
-  font-size:  48px;
+  font-size:  3rem;
 }
 
 .input-field {
@@ -74,8 +75,22 @@ html {
   flex-basis: 80px;
   flex-grow: 1;
 }
+
 .key-button_pressed {
   background-color: #ddd;
   transform: scale(0.8);
   box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
+}
+
+.info {
+  width: 100%;
+  margin: 10px 0 0px;
+  text-align: center;
+  color: aquamarine;
+}
+
+.info_sense {
+  margin: 0px 50px 0 10px;
+  font-size: 1.2rem;
+  font-weight: 700;
 }
