@@ -130,7 +130,7 @@ function createKeyButton(_key, index) {
 }
 
 function playSound() {
-  const a = new Audio(`../asserts/${getRandomNumber(9)}.wav`);
+  const a = new Audio(`./asserts/${getRandomNumber(9)}.wav`);
   a.volume = 0.005;
   a.play();
 }
@@ -141,6 +141,7 @@ function onVirtualButtonDown(index, doNotResetShift = false) {
   if (index === indexCapsLock) {
     isCapsLock = !isCapsLock;
     keys[index].classList.toggle('key-button_pressed');
+    if (isShift && !doNotResetShift) resetShift();
     updateButtonsNames();
     return;
   }
