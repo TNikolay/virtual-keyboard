@@ -1,0 +1,99 @@
+*,
+::after,
+::before {
+  box-sizing: border-box;
+}
+
+body,
+html {
+  margin: 0;
+  padding: 0;
+  min-height: 100vh;
+  color: aquamarine;
+  font-size: 16px;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+.wrapper {
+  display: flex;
+  min-height: 100vh;
+  flex-direction: column;
+  margin: 0 auto;
+  background-image: url("../asserts/1.jpg");
+  background-size: cover;
+}
+
+.keyboard-wrapper {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  padding: 10px;
+  background-color: #f8f8f8;
+  opacity: 0.8;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  box-shadow: 10px 10px 10px 0px rgba(0, 0, 0, 0.2);
+  width: 915px;
+  margin: 70px auto 10px;
+}
+
+.h1 {
+  margin: 40px auto;
+  font-family: Comic Sans MS;
+  font-size:  3rem;
+}
+
+.input-field {
+  resize: none;
+  width: 700px;
+  height: 200px;
+  margin: 0 auto;
+  font-family: Lucida Console;
+  scroll-behavior: auto;
+  white-space: nowrap;
+}
+
+.key-button {
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  flex-basis: 50px;
+  height: 50px;
+  font-size: 18px;
+  font-weight: bold;
+  color: #333;
+  background-color: #fff;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  box-shadow: 0px 0px 5px 0px rgba(0, 0, 0, 0.2);
+  transition: all 0.2s ease-in-out;
+  padding: 10px 10px;
+}
+
+.key-button_grow {
+  flex-basis: 80px;
+  flex-grow: 1;
+}
+
+.key-button_pressed {
+  background-color: #ddd;
+  transform: scale(0.8);
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
+}
+
+.info {
+  width: 100%;
+  margin: 10px 0 0px;
+  text-align: center;
+  color: aquamarine;
+}
+
+.info_sense {
+  margin: 0px 50px 0 10px;
+  font-size: 1.2rem;
+  font-weight: 700;
+}
